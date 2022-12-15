@@ -3,13 +3,15 @@
     "name": "cyclops",
     "version": "1.0",
 
-    "description": "",
-    "homepage_url": "",
+    "description": "An extension for stereogramming webpages.",
+    "homepage_url": "https://github.com/valer-ix/cyclops-ff",
     "icons": {
         "48": "icons/eye-48.jpg"
     },
 
-    "permissions": "activeTab",
+    "permissions": [
+        "activeTab"
+    ],
 
     "browser_action": {
         "default_icon": "icons/eye-32.jpg",
