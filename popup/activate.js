@@ -35,7 +35,6 @@ function updateCheck() {
         })
         .then((storedInfo) => {
             if (Object.keys(storedInfo).length !== 0) {
-                console.log("getState " + storedInfo[Object.keys(storedInfo)[0]]['checked'])
                 check.checked = storedInfo[Object.keys(storedInfo)[0]]['checked'];
             };
         });
