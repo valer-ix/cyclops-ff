@@ -13,10 +13,10 @@
     body {
         color: #C0BAB2;
         font-size: 2.25rem;
-        line-height: 1.25;
         font-family: 'Lora',
         max-width: 100%;
         background-color: white;
+        line-height: 151%;
     }
 
     :root {
@@ -40,7 +40,7 @@
         grid-template-columns: 3fr 2fr 2fr 3fr; 
         grid-column-gap: var(--column-gap);
         grid-row-gap: var(--row-gap);
-        justify-content: center;		
+        justify-content: center;
     }
     
     [class*=l-] {
@@ -63,12 +63,10 @@
     `;
 
     document.addEventListener("scroll", (e) => {
-        console.log('in');
         cur.style.cursor = 'none';
     })
 
     document.addEventListener("mousemove", (e) => {
-        console.log('out');
         cur.style.cursor = '';
     })
 
@@ -78,15 +76,10 @@
         styleSheet.innerText = styles
         document.head.appendChild(styleSheet)
 
-        console.log(html_text);
         document.body.innerHTML = `
         <div id='main' class='grid'>
-            <div class='l-left'>
-                ${html_text}
-            </div>
-            <div class='l-right'>
-                ${html_text}
-            </div>
+            <div class='l-left'>${html_text}</div>
+            <div class='l-right'>${html_text}</div>
         </div>
         `;
     }

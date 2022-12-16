@@ -1,3 +1,3 @@
 # Cyclops
 
-An extension for stereogramming webpage text.
+Stereogram webpage text.

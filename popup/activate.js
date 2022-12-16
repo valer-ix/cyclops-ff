@@ -3,25 +3,25 @@ const check = document.getElementById("checkbox");
 
 function getActiveTab() {
     return browser.tabs.query({active: true, currentWindow: true});
-  }
+}
 
-check.addEventListener("change", (e) => {
-    function cyclops(tabs) {
-        let contentToStore = {};
-        contentToStore[tabs[0].url] = {'checked': check.checked};
-        browser.storage.local.set(contentToStore);
-        getActiveTab().then((tabs) => {
-            browser.tabs
-            .sendMessage(tabs[0].id, {
-                action: check.checked,
-            });
-        })
-    }
+function cyclops(tabs) {
+    let contentToStore = {};
+    contentToStore[tabs[0].url] = {'checked': check.checked};
+    browser.storage.local.set(contentToStore);
+    getActiveTab().then((tabs) => {
+        browser.tabs
+        .sendMessage(tabs[0].id, {
+            action: check.checked,
+        });
+    })
+}
 
-    function reportError(error) {
+function reportError(error) {
         console.error(`Could not cyclops: ${error}`);
     }
 
+check.addEventListener("change", (e) => {
     browser.tabs
         .query({ windowId: myWindowId, active: true })
         .then(cyclops)
@@ -46,8 +46,3 @@ browser.windows.getCurrent({ populate: true}).then((windowInfo) => {
     myWindowId = windowInfo.id;
     updateCheck();
 })
-
-// browser.tabs
-//     .executeScript({ file: "/content_scripts/cyclops.js" })
-//     .then(listenForChange)
-//     .catch(reportExecuteScriptError);

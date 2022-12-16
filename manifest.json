@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "Cyclops",
     "version": "1.0",
-    "description": "An extension for stereogramming webpage text.",
+    "description": "Stereogram webpage text.",
     "homepage_url": "https://github.com/valer-ix/cyclops-ff",
     "icons": {
         "48": "icons/eye-48.jpg",
@@ -27,6 +27,10 @@
             "matches": ["<all_urls>"],
             "js": ["content_scripts/cyclops.js"]
         }
-    ]
+    ],
+
+    "background": {
+        "scripts": ["background_scripts/background.js"]
+    }
 
 }
