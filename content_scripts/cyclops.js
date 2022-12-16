@@ -4,8 +4,11 @@
     }
     window.hasRun = true;
 
+    var cur = document.body;
+
     var html_body = document.body.innerHTML;
     var html_text = document.body.innerText;
+
     var styles = `
     body {
         color: #C0BAB2;
@@ -58,6 +61,16 @@
     }
     `;
 
+    document.addEventListener("scroll", (e) => {
+        console.log('in');
+        cur.style.cursor = 'none';
+    })
+
+    document.addEventListener("mousemove", (e) => {
+        console.log('out');
+        cur.style.cursor = '';
+    })
+
     function cyclops() {
         var styleSheet = document.createElement("style")
         styleSheet.id = 'style-cyclops'
@@ -66,7 +79,7 @@
 
         console.log(html_text);
         document.body.innerHTML = `
-        <div class='grid'>
+        <div id='main' class='grid'>
             <div class='l-left'>
                 ${html_text}
             </div>
