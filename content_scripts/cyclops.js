@@ -46,6 +46,7 @@
     [class*=l-] {
         background-color: black;
         padding: 0 1rem 0 1rem;
+        overflow-wrap: break-word;
     }
     
     .l-left {
