@@ -8,9 +8,15 @@
         console.log("hi");
     }
 
+    function decyclops() {
+        console.log("bye");
+    }
+
     browser.runtime.onMessage.addListener((message) => {
-        if (message.command == "cyclops") {
+        if (message.action == true) {
             cyclops();
+        } else {
+            decyclops();
         }
     });
 })();
