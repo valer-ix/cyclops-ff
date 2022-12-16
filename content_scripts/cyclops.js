@@ -11,7 +11,6 @@
         color: #C0BAB2;
         font-size: 2.25rem;
         line-height: 1.25;
-        font-weight: 700;
         font-family: 'Lora',
         max-width: 100%;
         background-color: white;
@@ -19,7 +18,7 @@
 
     :root {
         --grid-columns: 4;
-        --column-gap: 10px;
+        --column-gap: 20px;
         --row-gap: 10px;
     }
 
@@ -43,16 +42,19 @@
     
     [class*=l-] {
         background-color: black;
+        padding: 0 1rem 0 1rem;
     }
     
     .l-left {
         grid-column-start: 2;
         max-width: 100%;
+        min-width: 0;
     }
     
     .l-right {
         grid-column-start: 3;
         max-width: 100%;
+        min-width: 0;
     }
     `;
 
