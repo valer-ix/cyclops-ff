@@ -12,15 +12,14 @@
     var styles = `
     body {
         color: #C0BAB2;
-        font-size: 2.25rem;
-        font-family: 'Lora',
-        max-width: 100%;
         background-color: white;
-        line-height: 151%;
+        font-family: Lora, serif;
+        font-size: 2.25rem;
+        max-width: 100%;
+        line-height: normal;
     }
 
     :root {
-        --grid-columns: 4;
         --column-gap: 20px;
         --row-gap: 10px;
     }
