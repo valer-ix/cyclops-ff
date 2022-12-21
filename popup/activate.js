@@ -7,19 +7,21 @@ function getActiveTab() {
 
 function cyclops(tabs) {
     let contentToStore = {};
-    contentToStore[tabs[0].url] = {'checked': check.checked};
-    browser.storage.local.set(contentToStore);
-    getActiveTab().then((tabs) => {
-        browser.tabs
-        .sendMessage(tabs[0].id, {
-            action: check.checked,
+    if (check.checked !== browser.storage.local.get(contentToStore)) {
+        contentToStore[tabs[0].url] = {'checked': check.checked};
+        getActiveTab().then((tabs) => {
+            browser.tabs
+            .sendMessage(tabs[0].id, {
+                action: check.checked,
+            });
         });
-    })
+        browser.storage.local.set(contentToStore);
+    };
 }
 
 function reportError(error) {
-        console.error(`Could not cyclops: ${error}`);
-    }
+    console.error(`Could not cyclops: ${error}`);
+}
 
 check.addEventListener("change", (e) => {
     browser.tabs
@@ -40,7 +42,6 @@ function updateCheck() {
         });
 }
 
-browser.tabs.onActivated.addListener(updateCheck);
 browser.tabs.onUpdated.addListener(updateCheck);
 browser.windows.getCurrent({ populate: true}).then((windowInfo) => {
     myWindowId = windowInfo.id;

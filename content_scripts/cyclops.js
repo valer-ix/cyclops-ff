@@ -81,12 +81,28 @@
             <div class='l-right'>${html_text}</div>
         </div>
         `;
+
+        content = JSON.parse(localStorage.getItem(window.location.href))
+        if (content === null) {
+            var content = {};
+        }
+        content['scroll_pos_decyclops'] = window.pageYOffset
+        localStorage.setItem(window.location.href, JSON.stringify(content))
+        document.documentElement.scrollTop = document.body.scrollTop = content['scroll_pos_cyclops']
     }
 
     function decyclops() {
         const styleTag = document.getElementById('style-cyclops');
         document.getElementsByTagName('head')[0].removeChild(styleTag);
         document.body.innerHTML = html_body;
+
+        content = JSON.parse(localStorage.getItem(window.location.href))
+        if (content === null) {
+            var content = {};
+        }
+        content['scroll_pos_cyclops'] = window.pageYOffset
+        localStorage.setItem(window.location.href, JSON.stringify(content))
+        document.documentElement.scrollTop = document.body.scrollTop = content['scroll_pos_decyclops']
     }
 
     browser.runtime.onMessage.addListener((message) => {
