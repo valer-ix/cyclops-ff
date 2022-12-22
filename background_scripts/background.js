@@ -1,5 +1,3 @@
-const check = document.getElementById("checkbox");
-
 function getActiveTab() {
     return browser.tabs.query({active: true, currentWindow: true});
 }
@@ -23,4 +21,4 @@ function updateActiveTab(tabs) {
     });
 }
 
-browser.tabs.onUpdated.addListener(updateActiveTab);
+browser.webNavigation['onCompleted'].addListener(updateActiveTab);
