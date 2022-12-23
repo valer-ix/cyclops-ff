@@ -33,7 +33,7 @@
     }
     
     .grid {
-        display: grid;
+        display: grid !important;
         grid-auto-columns: 1fr;
         grid-auto-flow: column;
         grid-template-columns: 3fr 2fr 2fr 3fr; 
