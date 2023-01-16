@@ -76,7 +76,6 @@
         }
 
         content['scroll_pos_decyclops'] = window.pageYOffset
-        localStorage.setItem(window.location.href, JSON.stringify(content))
 
         var styleSheet = document.createElement("style")
         styleSheet.id = 'style-cyclops'
@@ -91,6 +90,9 @@
         `;
 
         document.documentElement.scrollTop = document.body.scrollTop = content['scroll_pos_cyclops']
+
+        content['active'] = true
+        localStorage.setItem(window.location.href, JSON.stringify(content))
     }
 
     function decyclops() {
@@ -100,7 +102,6 @@
         }
 
         content['scroll_pos_cyclops'] = window.pageYOffset
-        localStorage.setItem(window.location.href, JSON.stringify(content))
 
         const styleTag = document.getElementById('style-cyclops');
         document.getElementsByTagName('head')[0].removeChild(styleTag);
@@ -109,7 +110,21 @@
 
         document.documentElement.scrollTop = document.body.scrollTop = content['scroll_pos_decyclops']
 
+        content['active'] = false
+        localStorage.setItem(window.location.href, JSON.stringify(content))
     }
+
+    const interval = setInterval(function() {
+        content = JSON.parse(localStorage.getItem(window.location.href))
+        if (content !== null) {
+            if (content['active'] === true) {
+                content['scroll_pos_cyclops'] = window.pageYOffset
+            } else {
+                content['scroll_pos_decyclops'] = window.pageYOffset
+            }
+            localStorage.setItem(window.location.href, JSON.stringify(content))
+        }
+    }, 60000);
 
     browser.runtime.onMessage.addListener((message) => {
         if (message.action == true) {
