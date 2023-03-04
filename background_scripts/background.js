@@ -1,24 +1,24 @@
-// function getActiveTab() {
-//     return browser.tabs.query({active: true, currentWindow: true});
-// }
+const getCurrentUrl = () => {
+    return browser.tabs.query({ active: true, currentWindow: true })
+        .then((tabs) => tabs[0].url);
+};
 
-// function updateActiveTab(tabs) {
-//     getActiveTab()
-//     .then((tabs) => {
-//         return browser.storage.local.get(tabs[0].url);
-//     })
-//     .then((storedInfo) => {
-//         if (Object.keys(storedInfo).length !== 0) {
-//             if (storedInfo[Object.keys(storedInfo)[0]]['checked'] === true) {
-//                 getActiveTab().then((tabs) => {
-//                     browser.tabs
-//                     .sendMessage(tabs[0].id, {
-//                         action: true,
-//                     });
-//                 });
-//             };
-//         };
-//     });
-// }
+const sendMessageIfChecked = () => {
+    getCurrentUrl().then((url) => {
+        browser.storage.local.get(url).then((result) => {
+            if (result[url]) {
+                console.log('sending...');
+                browser.tabs.query({ active: true, currentWindow: true }).then(tabs => {
+                    console.log('sending for real...');
+                    browser.tabs.sendMessage(tabs[0].id, { action: true });
+                });
+            };
+        });
+    });
+};
 
-// browser.webNavigation['onCompleted'].addListener(updateActiveTab);
+browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (changeInfo.status === "complete") {
+        sendMessageIfChecked();
+    }
+});

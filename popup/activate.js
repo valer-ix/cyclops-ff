@@ -1,49 +1,36 @@
-let myWindowId;
-const check = document.getElementById("checkbox");
+const checkbox = document.getElementById("checkbox");
 
-function getActiveTab() {
-    return browser.tabs.query({active: true, currentWindow: true});
-}
+// Get current URL
+//
+const getCurrentUrl = () => {
+    return browser.tabs.query({ active: true, currentWindow: true })
+        .then((tabs) => tabs[0].url);
+};
 
-function cyclops(tabs) {
-    let contentToStore = {};
-    if (check.checked !== browser.storage.local.get(contentToStore)) {
-        contentToStore[tabs[0].url] = {'checked': check.checked};
-        getActiveTab().then((tabs) => {
-            browser.tabs
-            .sendMessage(tabs[0].id, {
-                action: check.checked,
-            });
-        });
-        browser.storage.local.set(contentToStore);
-    };
-}
+// Update checkbox
+//
+getCurrentUrl().then((url) => {
+    browser.storage.local.get(url).then((result) => {
+        if (result[url]) {
+            checkbox.checked = true;
+        } else {
+            checkbox.checked = false;
+        }
+    });
+});
 
-function reportError(error) {
-    console.error(`Could not cyclops: ${error}`);
-}
+// Save status
+//
+checkbox.addEventListener('change', () => {
+    const message = checkbox.checked ? { action: true } : { action: false };
 
-check.addEventListener("change", (e) => {
-    browser.tabs
-        .query({ windowId: myWindowId, active: true })
-        .then(cyclops)
-        .catch(reportError);
-})
+    getCurrentUrl().then((url) => {
+        const obj = {};
+        obj[url] = checkbox.checked;
+        browser.storage.local.set(obj);
+    });
 
-function updateCheck() {
-    browser.tabs.query({ windowId: myWindowId, active: true})
-        .then((tabs) => {
-            return browser.storage.local.get(tabs[0].url);
-        })
-        .then((storedInfo) => {
-            if (Object.keys(storedInfo).length !== 0) {
-                check.checked = storedInfo[Object.keys(storedInfo)[0]]['checked'];
-            };
-        });
-}
-
-browser.tabs.onUpdated.addListener(updateCheck);
-browser.windows.getCurrent({ populate: true}).then((windowInfo) => {
-    myWindowId = windowInfo.id;
-    updateCheck();
-})
+    browser.tabs.query({ active: true, currentWindow: true }).then(tabs => {
+        browser.tabs.sendMessage(tabs[0].id, message);
+    })
+});
