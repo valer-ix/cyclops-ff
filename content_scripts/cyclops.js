@@ -4,9 +4,7 @@
     }
     window.hasRun = true;
 
-    var cur = document.body;
-
-    var html_body = document.body.innerHTML;
+    var html_body = document.documentElement.outerHTML;
     var html_text = document.body.innerText;
 
     var styles = `
@@ -17,6 +15,8 @@
         font-size: 2.25rem;
         max-width: 100%;
         line-height: normal;
+        overflow: hidden;
+        height: 100vh;
     }
 
     :root {
@@ -32,7 +32,7 @@
         background-image: none;
     }
     
-    .grid {
+    .grid-cyclops {
         display: grid !important;
         grid-auto-columns: 1fr;
         grid-auto-flow: column;
@@ -40,92 +40,165 @@
         grid-column-gap: var(--column-gap);
         grid-row-gap: var(--row-gap);
         justify-content: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 1);
+        z-index: 99999;
     }
     
     [class*=l-] {
-        background-color: black;
         padding: 0 1rem 0 1rem;
         overflow-wrap: break-word;
     }
     
-    .l-left {
+    .l-left-cyclops {
         grid-column-start: 2;
         max-width: 100%;
         min-width: 0;
+        height: 100vh;
     }
     
-    .l-right {
+    .l-right-cyclops {
         grid-column-start: 3;
         max-width: 100%;
         min-width: 0;
+        height: 100vh;
     }
+
+    iframe {
+        width: 100%;
+        border: none;
+        overflow: hidden; /* hide the scrollbar */
+      }
+      
     `;
 
-    document.addEventListener("scroll", (e) => {
-        cur.style.cursor = 'none';
-    })
-
-    document.addEventListener("mousemove", (e) => {
-        cur.style.cursor = '';
-    })
-
+    // Cyclops
+    //
     function cyclops() {
-        content = JSON.parse(localStorage.getItem(window.location.href))
+        // Get cookies
+        //
+        const url = window.location.href
+        content = JSON.parse(localStorage.getItem(url))
         if (content === null) {
             var content = {};
         }
 
-        content['scroll_pos_decyclops'] = window.pageYOffset
-
+        // Style sheet
+        //
         var styleSheet = document.createElement("style")
         styleSheet.id = 'style-cyclops'
         styleSheet.innerText = styles
         document.head.appendChild(styleSheet)
 
-        document.body.innerHTML = `
-        <div id='main' class='grid'>
-            <div class='l-left'>${html_text}</div>
-            <div class='l-right'>${html_text}</div>
-        </div>
-        `;
+        // Create iframes
+        var wrapper = document.createElement("div");
+        wrapper.id = "main-cyclops";
+        wrapper.className = "grid-cyclops";
+        wrapper.style.overflow = "hidden";
+        document.body.appendChild(wrapper);
 
-        document.documentElement.scrollTop = document.body.scrollTop = content['scroll_pos_cyclops']
+        var leftIframe = document.createElement("iframe");
+        leftIframe.id = "L";
+        leftIframe.className = "l-left-cyclops";
+        leftIframe.src = url;
+        wrapper.appendChild(leftIframe);
 
+        var rightIframe = document.createElement("iframe");
+        rightIframe.id = "R";
+        rightIframe.className = "l-right-cyclops";
+        rightIframe.src = url;
+        wrapper.appendChild(rightIframe);
+
+        // Iframe listeners
+        //
+        const iframes = document.querySelectorAll('iframe');
+        iframes.forEach(iframe => {
+            iframe.addEventListener('load', () => {
+                const iframeDoc = iframe.contentDocument;
+
+                // Hide scrollbar
+                //
+                iframeDoc.body.style.overflow = "hidden";
+                iframeDoc.body.style.scrollbarWidth = "none";
+                iframeDoc.documentElement.style.overflowY = 'scroll';
+                iframeDoc.documentElement.style.scrollbarWidth = "none";
+
+                // Set initial scroll position
+                //
+                // console.log('initial:', content['scroll_pos_cyclops'])
+                iframe.contentDocument.scrollingElement.scrollTop = content['scroll_pos_cyclops'];
+                // console.log('CHECK:', iframe.contentWindow.scrollY)
+
+                // Hide cursor on scroll
+                //
+                iframeDoc.addEventListener('scroll', () => {
+                    iframeDoc.body.style.cursor = 'none';
+                    content['scroll_pos_cyclops'] = parseInt(iframe.contentDocument.scrollingElement.scrollTop)
+                    // console.log('-cyclops:', content['scroll_pos_cyclops'])
+                    localStorage.setItem(url, JSON.stringify(content))
+                });
+                iframeDoc.addEventListener('mousemove', () => {
+                    iframeDoc.body.style.cursor = 'default';
+                });
+            });
+        });
+
+        // Sync scroll
+        //
+        leftIframe.addEventListener("load", function() {
+            leftIframe.contentWindow.addEventListener("scroll", function() {
+                // console.log('left:', leftIframe.contentWindow.scrollY, '; right:', rightIframe.contentWindow.scrollY)
+                rightIframe.contentDocument.scrollingElement.scrollTop = leftIframe.contentDocument.scrollingElement.scrollTop
+                // console.log('NEW RIGHT:', rightIframe.contentWindow.scrollY)
+            });
+        });
+        rightIframe.addEventListener("load", function() {
+            rightIframe.contentWindow.addEventListener("scroll", function() {
+                // console.log('right:', rightIframe.contentWindow.scrollY, '; left:', leftIframe.contentWindow.scrollY)
+                leftIframe.contentDocument.scrollingElement.scrollTop = rightIframe.contentDocument.scrollingElement.scrollTop
+                // console.log('NEW LEFT:', leftIframe.contentWindow.scrollY)
+            });
+        });
+
+        // Set cookies
+        //
         content['active'] = true
-        localStorage.setItem(window.location.href, JSON.stringify(content))
+        localStorage.setItem(url, JSON.stringify(content))
     }
 
+    // Decyclops
+    //
     function decyclops() {
-        content = JSON.parse(localStorage.getItem(window.location.href))
+        // Get cookies
+        //
+        const url = window.location.href
+        content = JSON.parse(localStorage.getItem(url))
         if (content === null) {
             var content = {};
         }
 
-        content['scroll_pos_cyclops'] = window.pageYOffset
+        // Delete cyclops wrapper
+        //
+        const wrapperTag = document.getElementById('main-cyclops');
+        document.getElementsByTagName('body')[0].removeChild(wrapperTag);
 
+        // Delete style
+        //
         const styleTag = document.getElementById('style-cyclops');
         document.getElementsByTagName('head')[0].removeChild(styleTag);
 
-        document.body.innerHTML = html_body;
-
-        document.documentElement.scrollTop = document.body.scrollTop = content['scroll_pos_decyclops']
-
+        // Set cookies
+        //
         content['active'] = false
-        localStorage.setItem(window.location.href, JSON.stringify(content))
+        localStorage.setItem(url, JSON.stringify(content))
     }
 
-    const interval = setInterval(function() {
-        content = JSON.parse(localStorage.getItem(window.location.href))
-        if (content !== null) {
-            if (content['active'] === true) {
-                content['scroll_pos_cyclops'] = window.pageYOffset
-            } else {
-                content['scroll_pos_decyclops'] = window.pageYOffset
-            }
-            localStorage.setItem(window.location.href, JSON.stringify(content))
-        }
-    }, 60000);
-
+    // Trigger
+    //
     browser.runtime.onMessage.addListener((message) => {
         if (message.action == true) {
             cyclops();
