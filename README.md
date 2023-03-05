@@ -10,7 +10,7 @@ Stereogram webpage text.
 - [y] external div height
 - [y] save scroll location
 - [y] save cyclops mode on refresh
-- have both mode types (new|legacy) in parallel
+- [y] have both mode types (new|legacy) in parallel
 - new activated by default
 - blocklist for new
 - clicking links in both iframes

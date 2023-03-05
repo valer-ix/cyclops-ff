@@ -42,3 +42,17 @@ checkbox_v2.addEventListener('change', () => {
         browser.tabs.sendMessage(tabs[0].id, message);
     })
 });
+
+checkbox_v1.addEventListener('change', () => {
+    const message = checkbox_v1.checked ? { action_v1: true } : { action_v1: false };
+
+    getCurrentUrl().then((url) => {
+        const obj = {};
+        obj[`${url}/v1`] = checkbox_v2.checked;
+        browser.storage.local.set(obj);
+    });
+
+    browser.tabs.query({ active: true, currentWindow: true }).then(tabs => {
+        browser.tabs.sendMessage(tabs[0].id, message);
+    })
+});
