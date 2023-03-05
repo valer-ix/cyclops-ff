@@ -13,4 +13,4 @@ Stereogram webpage text.
 - [y] have both mode types (new|legacy) in parallel
 - new activated by default
 - blocklist for new
-- clicking links in both iframes
+- [y] clicking links in both iframes

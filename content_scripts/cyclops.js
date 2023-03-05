@@ -135,12 +135,14 @@
         leftIframe.id = "L";
         leftIframe.className = "l-left-cyclops";
         leftIframe.src = url;
+        leftIframe.setAttribute('sandbox', 'allow-scripts allow-forms allow-same-origin');
         wrapper.appendChild(leftIframe);
 
         var rightIframe = document.createElement("iframe");
         rightIframe.id = "R";
         rightIframe.className = "l-right-cyclops";
         rightIframe.src = url;
+        rightIframe.setAttribute('sandbox', 'allow-scripts allow-forms allow-same-origin');
         wrapper.appendChild(rightIframe);
 
         // Iframe listeners
@@ -173,6 +175,21 @@
                 });
                 iframeDoc.addEventListener('mousemove', () => {
                     iframeDoc.body.style.cursor = 'default';
+                });
+
+                // Link clicks affect both iframes
+                //
+                iframeDoc.addEventListener('click', (event) => {
+                    const link = event.target.closest('a');
+                    if (link) {
+                        event.preventDefault();
+                        if (event.target.hostname === window.location.hostname) {
+                            leftIframe.src = link.href;
+                            rightIframe.src = link.href;
+                            leftIframe.contentDocument.scrollingElement.scrollTop = 0
+                            rightIframe.contentDocument.scrollingElement.scrollTop = 0
+                        };
+                    };
                 });
             });
         });
@@ -244,7 +261,9 @@
     });
 
 
+    ///////////////////
     /* Deprecated v1 */
+    ///////////////////
     //
     function cyclops_v1() {
         content = JSON.parse(localStorage.getItem(window.location.href));
@@ -297,4 +316,6 @@
         // content['active'] = false
         localStorage.setItem(window.location.href, JSON.stringify(content));
     };
+    //
+    /* */
 })();
