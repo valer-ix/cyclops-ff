@@ -154,7 +154,7 @@
 
                 // Change font size
                 //
-                const css = 'p, h3 { font-size: 2.25rem !important; }';
+                const css = 'p, h3 { font-size: 2.25rem !important; line-height: 100% !important; }';
                 const style = iframeDoc.createElement('style');
                 style.textContent = css;
                 iframeDoc.head.appendChild(style);
