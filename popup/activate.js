@@ -1,4 +1,6 @@
-const checkbox = document.getElementById("checkbox");
+const checkbox_v2 = document.getElementById("checkbox-v2");
+const checkbox_v1 = document.getElementById("checkbox-v1");
+const currVersion = 'v2';
 
 // Get current URL
 //
@@ -10,23 +12,29 @@ const getCurrentUrl = () => {
 // Update checkbox
 //
 getCurrentUrl().then((url) => {
-    browser.storage.local.get(url).then((result) => {
-        if (result[url]) {
-            checkbox.checked = true;
+    urlCurr = `${url}/${currVersion}`;
+    browser.storage.local.get(urlCurr).then((result) => {
+        if (result[urlCurr]) {
+            checkbox_v2.checked = true;
         } else {
-            checkbox.checked = false;
+            checkbox_v2.checked = false;
+        }
+        if (result[`${url}/v1`]) {
+            checkbox_v1.checked = true;
+        } else {
+            checkbox_v1.checked = false;
         }
     });
 });
 
 // Save status
 //
-checkbox.addEventListener('change', () => {
-    const message = checkbox.checked ? { action: true } : { action: false };
+checkbox_v2.addEventListener('change', () => {
+    const message = checkbox_v2.checked ? { action: true } : { action: false };
 
     getCurrentUrl().then((url) => {
         const obj = {};
-        obj[url] = checkbox.checked;
+        obj[`${url}/${currVersion}`] = checkbox_v2.checked;
         browser.storage.local.set(obj);
     });
 

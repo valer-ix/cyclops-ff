@@ -19,6 +19,18 @@
     width: 0;
     height: 0;
   }
+
+  .checkbox-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .checkbox-container p {
+    margin-top: 12px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 24px;
+  }
   
   /* The slider */
   .slider {

@@ -1,8 +1,5 @@
 (() => {
-    if (window.hasRun) {
-        return;
-    }
-    window.hasRun = true;
+    const currVersion = 'v2';
 
     var html_body = document.documentElement.outerHTML;
     var html_text = document.body.innerText;
@@ -82,17 +79,18 @@
         // Get cookies
         //
         const url = window.location.href
-        content = JSON.parse(localStorage.getItem(url))
+        const urlStore = `${url}/${currVersion}`;
+        content = JSON.parse(localStorage.getItem(urlStore));
         if (content === null) {
             var content = {};
-        }
+        };
 
         // Style sheet
         //
-        var styleSheet = document.createElement("style")
-        styleSheet.id = 'style-cyclops'
-        styleSheet.innerText = styles
-        document.head.appendChild(styleSheet)
+        var styleSheet = document.createElement("style");
+        styleSheet.id = 'style-cyclops';
+        styleSheet.innerText = styles;
+        document.head.appendChild(styleSheet);
 
         // Create iframes
         var wrapper = document.createElement("div");
@@ -139,7 +137,7 @@
                     iframeDoc.body.style.cursor = 'none';
                     content['scroll_pos_cyclops'] = parseInt(iframe.contentDocument.scrollingElement.scrollTop)
                     // console.log('-cyclops:', content['scroll_pos_cyclops'])
-                    localStorage.setItem(url, JSON.stringify(content))
+                    localStorage.setItem(urlStore, JSON.stringify(content))
                 });
                 iframeDoc.addEventListener('mousemove', () => {
                     iframeDoc.body.style.cursor = 'default';
@@ -167,7 +165,7 @@
         // Set cookies
         //
         content['active'] = true
-        localStorage.setItem(url, JSON.stringify(content))
+        localStorage.setItem(urlStore, JSON.stringify(content))
     }
 
     // Decyclops
@@ -175,11 +173,11 @@
     function decyclops() {
         // Get cookies
         //
-        const url = window.location.href
-        content = JSON.parse(localStorage.getItem(url))
+        const url = `${window.location.href}/${currVersion}`;
+        content = JSON.parse(localStorage.getItem(url));
         if (content === null) {
             var content = {};
-        }
+        };
 
         // Delete cyclops wrapper
         //
@@ -193,8 +191,8 @@
 
         // Set cookies
         //
-        content['active'] = false
-        localStorage.setItem(url, JSON.stringify(content))
+        content['active'] = false;
+        localStorage.setItem(url, JSON.stringify(content));
     }
 
     // Trigger
@@ -204,6 +202,62 @@
             cyclops();
         } else {
             decyclops();
-        }
+        };
     });
+
+
+
+    // Deprecated v1
+    //
+    function cyclops_v1() {
+        content = JSON.parse(localStorage.getItem(window.location.href));
+        if (content === null) {
+            var content = {};
+        };
+
+        content['scroll_pos_decyclops'] = window.pageYOffset;
+
+        var styleSheet = document.createElement("style");
+        styleSheet.id = 'style-cyclops';
+        styleSheet.innerText = styles;
+        document.head.appendChild(styleSheet);
+
+        document.body.innerHTML = `
+        <div id='main' class='grid'>
+            <div class='l-left'>${html_text}</div>
+            <div class='l-right'>${html_text}</div>
+        </div>
+        `;
+
+        document.documentElement.scrollTop = document.body.scrollTop = content['scroll_pos_cyclops'];
+
+        // content['active'] = true
+        localStorage.setItem(window.location.href, JSON.stringify(content));
+
+        document.addEventListener("scroll", (e) => {
+            cur.style.cursor = 'none';
+        });
+        document.addEventListener("mousemove", (e) => {
+            cur.style.cursor = '';
+        });
+    };
+
+    function decyclops_v1() {
+        content = JSON.parse(localStorage.getItem(window.location.href));
+        if (content === null) {
+            var content = {};
+        };
+
+        content['scroll_pos_cyclops'] = window.pageYOffset;
+
+        const styleTag = document.getElementById('style-cyclops');
+        document.getElementsByTagName('head')[0].removeChild(styleTag);
+
+        document.body.innerHTML = html_body;
+
+        document.documentElement.scrollTop = document.body.scrollTop = content['scroll_pos_decyclops'];
+
+        // content['active'] = false
+        localStorage.setItem(window.location.href, JSON.stringify(content));
+    };
 })();
