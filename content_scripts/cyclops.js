@@ -150,7 +150,14 @@
         const iframes = document.querySelectorAll('iframe');
         iframes.forEach(iframe => {
             iframe.addEventListener('load', () => {
-                const iframeDoc = iframe.contentDocument;
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+                // Change font size
+                //
+                const css = 'p, h3 { font-size: 2.25rem !important; }';
+                const style = iframeDoc.createElement('style');
+                style.textContent = css;
+                iframeDoc.head.appendChild(style);
 
                 // Hide scrollbar
                 //
