@@ -14,5 +14,4 @@ Stereogram webpage text.
 - new activated by default
 - blocklist for new
 - [y] clicking links in both iframes
-- bigger v2 text option
-- reverse color option
+- [y] reverse color option

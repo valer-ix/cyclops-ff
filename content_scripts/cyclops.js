@@ -67,7 +67,6 @@
         font-size: 2.25rem;
         max-width: 100%;
         line-height: normal;
-        overflow: hidden;
     }
     :root {
         --column-gap: 20px;
@@ -105,6 +104,10 @@
     }
     `;
 
+    ////////
+    /* v2 */
+    ////////
+    //
     // Cyclops
     //
     function cyclops() {
@@ -154,8 +157,9 @@
 
                 // Change font size
                 //
-                const css = 'p, h3 { font-size: 2.25rem !important; line-height: 100% !important; }';
+                const css = 'p, h3 { font-size: 2.25rem !important; line-height: 110% !important; }';
                 const style = iframeDoc.createElement('style');
+                style.id = 'text-style-cyclops'
                 style.textContent = css;
                 iframeDoc.head.appendChild(style);
 
@@ -195,6 +199,8 @@
                             rightIframe.src = link.href;
                             leftIframe.contentDocument.scrollingElement.scrollTop = 0
                             rightIframe.contentDocument.scrollingElement.scrollTop = 0
+                        } else {
+                            window.open(link.href, "_blank");
                         };
                     };
                 });
@@ -217,6 +223,16 @@
                 // console.log('NEW LEFT:', leftIframe.contentWindow.scrollY)
             });
         });
+
+        // Enable Dark Mode
+        //
+        if (content['dm'] == true) {
+            iframes.forEach(iframe => {
+                iframe.addEventListener('load', () => {
+                    dark_mode_main(iframe);
+                })
+            })
+        };
 
         // Set cookies
         //
@@ -251,13 +267,78 @@
         localStorage.setItem(url, JSON.stringify(content));
     }
 
-    // Trigger
+
+    ///////////////
+    /* Dark Mode */
+    ///////////////
+    //
+    function dark_mode_main(iframe) {
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        const css = 'div { background-color: black !important; } p { color: #C0BAB2 !important; }';
+        const style = iframeDoc.createElement('style');
+        style.id = 'dark-mode-cyclops';
+        style.textContent = css;
+        iframeDoc.head.appendChild(style);
+    };
+
+    function en_dark_mode() {
+        // Get cookies
+        //
+        const url = `${window.location.href}/${currVersion}`;
+        content = JSON.parse(localStorage.getItem(url));
+        if (content === null) {
+            var content = {};
+        };
+        // Add style
+        //
+        const iframes = document.querySelectorAll('iframe');
+        iframes.forEach(iframe => {
+            dark_mode_main(iframe);
+        });
+        // Set cookies
+        //
+        content['dm'] = true;
+        localStorage.setItem(url, JSON.stringify(content));
+    };
+
+    function de_dark_mode() {
+        // Get cookies
+        //
+        const url = `${window.location.href}/${currVersion}`;
+        content = JSON.parse(localStorage.getItem(url));
+        if (content === null) {
+            var content = {};
+        };
+        // Remove style
+        //
+        const iframes = document.querySelectorAll('iframe');
+        iframes.forEach(iframe => {
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            const styleTag = iframeDoc.getElementById('dark-mode-cyclops');
+            iframeDoc.getElementsByTagName('head')[0].removeChild(styleTag);
+        });
+        // Set cookies
+        //
+        content['dm'] = false;
+        localStorage.setItem(url, JSON.stringify(content));
+    };
+
+
+    /////////////
+    /* Trigger */
+    /////////////
     //
     browser.runtime.onMessage.addListener((message) => {
         if (message.action == true) {
             cyclops();
         } else if (message.action == false) {
             decyclops();
+        };
+        //
+        if (message.action_dm == true) {
+            en_dark_mode();
+        } else if (message.action_dm == false) {
+            de_dark_mode();
         };
         //
         if (message.action_v1 == true) {
