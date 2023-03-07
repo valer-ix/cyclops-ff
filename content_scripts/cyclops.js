@@ -274,7 +274,11 @@
     //
     function dark_mode_main(iframe) {
         const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        const css = 'div { background-color: black !important; } p { color: #C0BAB2 !important; }';
+        const css = `
+        body { background-color: black !important; color: #C0BAB2 !important; }
+        div  { background-color: black !important; color: #C0BAB2 !important; }
+        p    { background-color: black !important; color: #C0BAB2 !important; }
+        `;
         const style = iframeDoc.createElement('style');
         style.id = 'dark-mode-cyclops';
         style.textContent = css;
